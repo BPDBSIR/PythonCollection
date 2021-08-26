@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import threading
 
 """
 wallhaven.cc
@@ -14,7 +13,6 @@ def requestWallHaven(page, root_dir):
     :param root_dir: 图片存放地址
     :return:
     """
-    print("当前线程 => %s " % threading.current_thread().name)
     res = requests.get("https://wallhaven.cc/hot?page=" + page).text
     soup = BeautifulSoup(res, "html.parser")
     for item in soup.find_all("a", "preview"):
@@ -28,14 +26,11 @@ def requestWallHaven(page, root_dir):
         print("文件名称: %s " % file_name)
         with open(root_dir + file_name, "wb") as f:
             f.write(requests.get(img_url).content)
-
     print("Page => %s  Success！" % page)
 
 
 if __name__ == '__main__':
     # Current-Page 32
-    for i in range(19, 130):
-        t = threading.Thread(target=requestWallHaven, name="Thread" + str(i), args=(str(i), "F:\\Wallhaven\\"))
-        t.start()
-        t.join()
+    for i in range(32, 130):
+        requestWallHaven(str(i), "F:\\Wallhaven\\")
     print("全部下载完毕！")
